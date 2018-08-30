@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+    <style>
+        .active {
+            font-weight: bold;
+            color: #F00;
+            font-size: 2em;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>日志列表</h1>
+
+    <form>
+        <div>
+            关键字：
+            <input type="text" name="keyword" value="<?=@$_GET['keyword']?>"> 发表日期：
+            <input type="text" name="start_date" value="<?=@$_GET['start_date']?>"> ~
+            <input type="text" name="end_date" value="<?=@$_GET['end_date']?>"> 
+            <input type="submit" value="搜索">
+        </div>
+    </form>
+
+    <br>
+
+    <table border="1" width="100%">
+        <tr>
+            <th>ID</th>
+            <th width="40%">标题</th>
+            <th>
+                发表日期
+            </th>
+            <th>修改日期</th>
+            <th>
+                浏览量
+                <a href="?<?=getUrlParams(['odby','odway'])?>odby=display&odway=asc">☝︎</a>
+                <a href="?<?=getUrlParams(['odby','odway'])?>odby=display&odway=desc">☟</a>
+            </th>
+            <th>操作</th>
+        </tr>
+        <?php foreach($data as $v): ?>
+        <tr>
+            <td>
+                <?=$v['id']?>
+            </td>
+            <td><a href=""><?=$v['title']?></a></td>
+            <td>
+                <?=$v['created_at']?>
+            </td>
+            <td>
+                <?=$v['updated_at']?>
+            </td>
+
+            <td>
+                <?=$v['display']?>
+            </td>
+            <td>
+                <a href="">修改</a>
+                <a href="">删除</a>
+            </td>
+        </tr>
+        <?php endforeach; ?>
+    </table>
+    <br>
+    <?=$btns?>
+</body>
+
+</html>

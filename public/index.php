@@ -10,7 +10,7 @@
 
     spl_autoload_register('autoload');
 
-    if($_SERVER['PATH_INFO']){
+    if(isset($_SERVER['PATH_INFO'])){
 
         $pathInfo = explode("/",$_SERVER['PATH_INFO']);
         $controller = ucfirst($pathInfo[1]).'Controller';
@@ -32,4 +32,19 @@
 
         $path = str_replace('.','/',$viewFileName).'.html';
         require(ROOT . 'views/' . $path);
+    }
+
+    function getUrlParams($except = []){
+
+        foreach($except as $v){
+
+            unset($_GET[$v]);
+        }
+
+        $str = '';
+        foreach($_GET as $k=>$v){
+
+            $str .= "$k=$v&";
+        }
+        return $str;
     }
