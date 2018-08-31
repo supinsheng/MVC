@@ -1,0 +1,1 @@
+php C:/Su/MVC/public/index.php blog index2html

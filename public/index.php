@@ -1,6 +1,7 @@
 <?php
     
     define("ROOT",dirname(__FILE__)."/../");
+    require(ROOT.'vendor/autoload.php');
 
     function autoload($class){
 
@@ -10,14 +11,21 @@
 
     spl_autoload_register('autoload');
 
-    if(isset($_SERVER['PATH_INFO'])){
+    if(php_sapi_name() == "cli"){
 
-        $pathInfo = explode("/",$_SERVER['PATH_INFO']);
-        $controller = ucfirst($pathInfo[1]).'Controller';
-        $action = $pathInfo[2];
+        $controller = ucfirst($argv[1])."Controller";
+        $action = $argv[2];
     }else {
-        $controller = "IndexController";
-        $action = "index";
+
+        if(isset($_SERVER['PATH_INFO'])){
+
+            $pathInfo = explode("/",$_SERVER['PATH_INFO']);
+            $controller = ucfirst($pathInfo[1]).'Controller';
+            $action = $pathInfo[2];
+        }else {
+            $controller = "IndexController";
+            $action = "index";
+        }
     }
 
     $fullController = 'controllers\\'.$controller;

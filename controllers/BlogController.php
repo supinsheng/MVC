@@ -2,107 +2,66 @@
 
     namespace controllers;
     use Models\Blog;
-    use PDO;
 
     class BlogController {
 
         public function index(){
 
-            $pdo = new PDO("mysql:host=localhost;dbname=mvc","root","123");
-            $pdo->exec("set names utf8");
-
-            $where = 1;
-
-            $value = [];
-
-            if(isset($_GET['keyword']) && $_GET['keyword']){
-
-                $where .= " and (title LIKE ? OR content LIKE ?)";
-                $value[] = '%'.$_GET['keyword'].'%';
-                $value[] = '%'.$_GET['keyword'].'%';
-            }
-
-            if(isset($_GET['start_date']) && $_GET['start_date']){
-
-                $where .= " AND created_at >= ?";
-                $value[] = $_GET['start_date'];
-            }
-
-            if(isset($_GET['end_date']) && $_GET['end_date']){
-
-                $where .= " and created_at <=?";
-                $value[] = $_GET['end_date'];
-            }
-
-            $odby = 'created_at';
-            $odway = 'desc';
-
-            if(isset($_GET['odby']) && $_GET['odby'] == 'display')
-            {
-                $odby = 'display';
-            }
-
-            if(isset($_GET['odway']) && $_GET['odway'] == 'asc')
-            {
-                $odway = 'asc';
-            }
-
-            if(isset($_GET['odway']) && $_GET['odway'] == 'desc')
-            {
-                $odway = 'desc';
-            }
-
-            $perpage = 3;
-            $page = isset($_GET['page']) ? max(1,(int)$_GET['page']) : 1;
-
-            $offset = ($page-1) * $perpage;
-
-            $stmt = $pdo->prepare("select count(*) from blog where $where");
-
-            $stmt->execute($value);
-
-            $count = $stmt->fetch(PDO::FETCH_COLUMN);
-
-            $pageCount = ceil( $count / $perpage );
-
-            $btns = '';
-            for($i=1; $i<=$pageCount; $i++)
-            {
-                // 先获取之前的参数
-                $params = getUrlParams(['page']);
-
-                $class = $page==$i ? 'active' : '';
-                $btns .= "<a class='$class' href='?{$params}page=$i'> $i </a>";
-            }
-        
-
-            $stmt = $pdo->prepare("select * from blog where $where ORDER BY $odby $odway LIMIT $offset,$perpage");
-            $stmt->execute($value);
-
-            $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            $blog = new Blog;
+            $dataArr = $blog->search();
             
-            view("blog.index",['data'=>$data,'btns'=>$btns]);
+            view("blog.index",$dataArr);
         }
 
         public function content_to_html(){
 
-            $pdo = new PDO("mysql:host=localhost;dbname=mvc","root","123");
-            $pdo->exec("set NAMES utf8");
+            $blog = new Blog;
 
-            $stmt = $pdo->query("select * from blog limit 10");
-            $blogs = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            $blog->content2html();
+        }
 
-            ob_start();
-            foreach($blogs as $v){
+        public function index2html(){
 
-                view("blog.content",["blog"=>$v]);
+            $blog = new Blog;
+            $blog->index2html();
+        }
 
-                $str = ob_get_contents();
-               
-                file_put_contents(ROOT.'public/contents/'.$v['id'].'.html', $str);
+        public function update_display(){
 
-                // 清空缓冲区
-                ob_clean();    
+            $redis = new \Predis\Client([
+                'scheme' => 'tcp',
+                'host'   => '127.0.0.1',
+                'port'   => 6379,
+            ]);
+
+            $id = (int)$_GET['id'];
+            $key = "blog-{$id}";
+            
+            if($redis->hexists("blog_displays",$key)){
+
+                $newNum = $redis->hincrby("blog_displays",$key,1);
+                echo $newNum;
+            }else {
+                
+                $blog = new Blog;
+
+                $display = $blog->getDisplay($id);
+
+                $display++;
+                $redis->hset("blog_displays",$key,$display);
+                echo $display;
             }
+
+            // $redis->set("library","predis");
+
+            // $retavl = $redis->get("library");
+            // echo $retavl;
+            // $redis->setex("str",10,"bax");
+
+            // $redis->setnx("foo",12);
+            // $redis->setnx("foo",34);
+
+            // $redis->del("foo");
+            // echo '<br>'.$redis->type("library");
         }
     }
