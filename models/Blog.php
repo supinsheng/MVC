@@ -124,10 +124,46 @@
 
         public function getDisplay($id){
 
-            $stmt = $this->pdo->prepare("SELECT display FROM blog WHERE id = ?");
-            $stmt->execute([$id]);
-            $display = $stmt->fetch(PDO::FETCH_COLUMN);
+            $redis = new \Predis\Client([
+                'scheme' => 'tcp',
+                'host'   => '127.0.0.1',
+                'port'   => 6379,
+            ]);
 
-            return $display;
+            $key = "blog-{$id}";
+            
+            if($redis->hexists("blog_displays",$key)){
+
+                $newNum = $redis->hincrby("blog_displays",$key,1);
+                return $newNum;
+            }else {
+                
+                $stmt = $this->pdo->prepare("SELECT display FROM blog WHERE id = ?");
+                $stmt->execute([$id]);
+                $display = $stmt->fetch(PDO::FETCH_COLUMN);
+
+                $display++;
+                $redis->hset("blog_displays",$key,$display);
+                return $display;
+            }
+        }
+
+        public function displayToDb(){
+
+            $redis = new \Predis\Client([
+                'scheme' => 'tcp',
+                'host'   => '127.0.0.1',
+                'port'   => 6379,
+            ]);
+
+            $data = $redis->hgetall("blog_displays");
+
+            foreach($data as $k=>$v){
+
+                $id = str_replace("blog-","",$k);
+
+                $stmt = $this->pdo->prepare("UPDATE blog SET display={$v} WHERE id= ? ");
+                $stmt->execute([$id]);
+            }
         }
     }

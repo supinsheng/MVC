@@ -2,10 +2,32 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>Document</title>
+    <title><?=$blog['title']?></title>
 </head>
 <body>
     <h1><?=$blog['title']?></h1>
+    <p>浏览量：<span id="display"></span></p>
     <p><?=$blog['content']?></p>
 </body>
 </html>
+<script
+  src="https://code.jquery.com/jquery-3.3.1.min.js"
+  integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+  crossorigin="anonymous"></script>
+
+<script>
+
+    var id = "<?=$blog['id']?>";
+    
+    var url = "/blog/update_display?id="+id;
+
+    $.ajax({
+
+        type:"GET",
+        url:url,
+        success:function(data){
+            // 把返回的浏览量放到页面
+            $("#display").html(data);
+        }
+    })
+</script>

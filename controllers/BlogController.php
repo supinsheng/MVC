@@ -27,30 +27,11 @@
         }
 
         public function update_display(){
-
-            $redis = new \Predis\Client([
-                'scheme' => 'tcp',
-                'host'   => '127.0.0.1',
-                'port'   => 6379,
-            ]);
-
-            $id = (int)$_GET['id'];
-            $key = "blog-{$id}";
             
-            if($redis->hexists("blog_displays",$key)){
+            $id = (int)$_GET['id'];
 
-                $newNum = $redis->hincrby("blog_displays",$key,1);
-                echo $newNum;
-            }else {
-                
-                $blog = new Blog;
-
-                $display = $blog->getDisplay($id);
-
-                $display++;
-                $redis->hset("blog_displays",$key,$display);
-                echo $display;
-            }
+            $blog = new Blog;
+            echo $blog->getDisplay($id);
 
             // $redis->set("library","predis");
 
@@ -63,5 +44,11 @@
 
             // $redis->del("foo");
             // echo '<br>'.$redis->type("library");
+        }
+
+        public function displayToDb(){
+
+            $blog = new Blog;
+            $blog->displayToDb();
         }
     }
