@@ -3,15 +3,7 @@
     namespace Models;
     use PDO;
 
-    class Blog {
-
-        public $pdo;
-
-        public function __construct(){
-
-            $this->pdo = new PDO("mysql:host=localhost;dbname=mvc","root","123");
-            $this->pdo->exec("set names utf8");
-        }
+    class Blog extends Base {
 
         public function search(){
 
@@ -61,7 +53,7 @@
 
             $offset = ($page-1) * $perpage;
 
-            $stmt = $this->pdo->prepare("select count(*) from blog where $where");
+            $stmt = self::$pdo->prepare("select count(*) from blog where $where");
 
             $stmt->execute($value);
 
@@ -80,7 +72,7 @@
             }
         
 
-            $stmt = $this->pdo->prepare("select * from blog where $where ORDER BY $odby $odway LIMIT $offset,$perpage");
+            $stmt = self::$pdo->prepare("select * from blog where $where ORDER BY $odby $odway LIMIT $offset,$perpage");
             $stmt->execute($value);
 
             $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -90,7 +82,7 @@
 
         public function content2html(){
 
-            $stmt = $this->pdo->query("select * from blog limit 10");
+            $stmt = self::$pdo->query("select * from blog limit 10");
             $blogs = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
             ob_start();
@@ -109,7 +101,7 @@
 
         public function index2html(){
 
-            $stmt = $this->pdo->query("SELECT * FROM blog ORDER BY id DESC LIMIT 20 ");
+            $stmt = self::$pdo->query("SELECT * FROM blog ORDER BY id DESC LIMIT 20 ");
             $blogs = $stmt->fetchAll(PDO::FETCH_ASSOC);
             
             ob_start();
@@ -124,11 +116,7 @@
 
         public function getDisplay($id){
 
-            $redis = new \Predis\Client([
-                'scheme' => 'tcp',
-                'host'   => '127.0.0.1',
-                'port'   => 6379,
-            ]);
+            $redis = \Libs\Redis::getInstance();
 
             $key = "blog-{$id}";
             
@@ -138,7 +126,7 @@
                 return $newNum;
             }else {
                 
-                $stmt = $this->pdo->prepare("SELECT display FROM blog WHERE id = ?");
+                $stmt = self::$pdo->prepare("SELECT display FROM blog WHERE id = ?");
                 $stmt->execute([$id]);
                 $display = $stmt->fetch(PDO::FETCH_COLUMN);
 
@@ -162,7 +150,7 @@
 
                 $id = str_replace("blog-","",$k);
 
-                $stmt = $this->pdo->prepare("UPDATE blog SET display={$v} WHERE id= ? ");
+                $stmt = self::$pdo->prepare("UPDATE blog SET display={$v} WHERE id= ? ");
                 $stmt->execute([$id]);
             }
         }

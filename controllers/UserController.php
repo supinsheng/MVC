@@ -15,13 +15,18 @@
             $email = $_POST['email'];
             $password = md5($_POST['password']);
 
-            $user = new User;
-            $ret = $user->add($email,$password);
+            $code = md5( rand(1,99999) );
 
-            if(!$ret){
+            $key = "temp_user:{$code}";
 
-                echo "注册失败！";
-            }
+            $redis = \Libs\Redis::getInstance();
+
+            $value = json_encode([
+                'email'=>$email,
+                'password'=>$password
+            ]);
+
+            $redis->setex($key,300,$value);
 
             // $mail = new \Libs\Mail;
 
@@ -31,21 +36,48 @@
 
             // $mail->send('注册成功',$content, $from);
             $message = [
-                'content'=>"点击以下链接进行激活：<br> <a href=''>点击激活</a>。",
+                'content'=>"点击以下链接进行激活：<br> <a href='http://localhost:5533/user/active_user?code={$code}'>
+                http://localhost:5533/user/active_user?code={$code}</a>。
+                <p>如果按钮不能点击，请复制上面链接地址，在浏览器中访问来激活账号！</p>",
                 'title'=>'注册成功！',
                 'from'=>$from
             ];
 
             $message = json_encode($message);
 
-            $redis = new \Predis\Client([
-                'scheme' => 'tcp',
-                'host'   => '127.0.0.1',
-                'port'   => 6379,
-            ]);
-
             $redis->lpush("email",$message);
 
             echo 'ok';
+        }
+
+        public function active_user(){
+
+            $code = $_GET['code'];
+
+            $key = "temp_user:".$code;
+
+            $redis = \Libs\Redis::getInstance();
+
+            $data = $redis->get($key);
+
+            if($data){
+
+                $redis->del($key);
+                $data = json_decode($data,true);
+
+                $user = new User;
+
+                $user->add($data['email'],$data['password']);
+
+                header("Location:/user/login");
+            }else {
+
+                die("激活码无效！");
+            }
+        }
+
+        public function login(){
+
+            echo "login";
         }
     }

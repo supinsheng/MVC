@@ -8,11 +8,7 @@
 
             $mailer = new \Libs\Mail;
 
-            $redis = new \Predis\Client([
-                'scheme' => 'tcp',
-                'host'   => '127.0.0.1',
-                'port'   => 6379,
-            ]);
+            $redis = \Libs\Redis::getInstance();
 
             // 设置 PHP 永不超时
             ini_set('default_socket_timeout', -1);

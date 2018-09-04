@@ -56,3 +56,15 @@
         }
         return $str;
     }
+
+    function config($name){
+
+        static $config = null;
+
+        if($config === null){
+
+            $config = require_once(ROOT.'config.php');
+        }
+
+        return $config[$name];
+    }

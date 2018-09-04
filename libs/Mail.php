@@ -27,7 +27,20 @@
                         $to[0] => $to[1]
                     ])   // 收件人
                     ->setBody($content, 'text/html');     // 邮件内容及邮件内容类型
-            // 发送邮件
-            $this->mailer->send($message);
+
+            $config = config('email');
+
+            if($config['mode'] == "debug"){
+
+                $mess = $message->toString();
+
+                $log = new \Libs\Log('email');
+
+                $log->log($mess);
+            }else {
+
+                // 发送邮件
+                $this->mailer->send($message);
+            } 
         }
     }

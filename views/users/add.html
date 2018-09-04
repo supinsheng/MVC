@@ -5,6 +5,8 @@
     <title>Document</title>
 </head>
 <body>
+    <?php view('common.nav') ?>
+
     <h1>注册</h1>
 
     <form action="/user/store" method="post">
@@ -20,5 +22,7 @@
             <input type="submit" value="注册">
         </div>
     </form>
+
+    <?php view('common.footer') ?>
 </body>
 </html>
