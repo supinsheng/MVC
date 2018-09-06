@@ -154,4 +154,27 @@
                 $stmt->execute([$id]);
             }
         }
+
+        public function add($title,$content){
+
+            $stmt = self::$pdo->prepare("INSERT INTO blog(title,content,user_id,created_at) VALUES(?,?,?,now())");
+
+            $ret = $stmt->execute([
+                $title,
+                $content,
+                $_SESSION['id']
+            ]);
+
+            if(!$ret){
+
+                echo "失败！";
+                $error = $stmt->errorInfo();
+
+                echo "<pre>";
+                var_dump($error);
+                exit;
+            }
+
+            return self::$pdo->lastInsertId();
+        }
     }

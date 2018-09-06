@@ -78,6 +78,29 @@
 
         public function login(){
 
-            echo "login";
+            view("users.login");
+        }
+
+        public function dologin(){
+
+            $email = $_POST['email'];
+            $password = md5($_POST['password']);
+
+            $user = new User;
+
+            if($user->login($email,$password)){
+
+                message('登录成功！', 2, '/blog/index');
+            }else {
+                message('账号或者密码错误', 1, '/user/login');
+            }
+        }
+
+        public function logout(){
+
+            unset($_SESSION['id']);
+            unset($_SESSION['email']);
+
+            die("退出成功！");
         }
     }

@@ -51,4 +51,21 @@
             $blog = new Blog;
             $blog->displayToDb();
         }
+
+        public function create(){
+
+            view("blog.create");
+        }
+
+        public function store(){
+
+            $title = $_POST['title'];
+            $content = $_POST['content'];
+
+            $blog = new Blog;
+
+            $blog->add($title,$content);
+
+            message("发表成功",2,"/blog/index");
+        }
     }

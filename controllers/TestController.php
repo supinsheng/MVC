@@ -10,4 +10,9 @@ class TestController {
 
         $log->log('日志内容~');
     }
+
+    public function testPHP(){
+
+        phpinfo();
+    }
 }

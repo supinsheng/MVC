@@ -23,7 +23,7 @@
             $message->setSubject($title)   // 标题
                     ->setFrom(['supinsheng@126.com' => '苏品生'])   // 发件人
                     ->setTo([
-                        $to[0], 
+                        $to[0],
                         $to[0] => $to[1]
                     ])   // 收件人
                     ->setBody($content, 'text/html');     // 邮件内容及邮件内容类型

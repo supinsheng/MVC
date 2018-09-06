@@ -5,6 +5,25 @@
 
     class MockController {
 
+        public function user(){
+
+            try{
+
+                $pdo = new PDO("mysql:host=localhost;dbname=mvc","root","123");
+                $pdo->exec("set names UTF8");  
+
+            }catch(PDOException $e){
+                die("数据库连接失败".$e->getMessage());
+            } 
+
+            for($i=0;$i<10;$i++){
+
+                $email = rand(50000,99999999999).'@126.com';
+                $password = md5('123');
+                $pdo->exec("INSERT INTO users (email,password) VALUES('$email','$password')");
+            }
+        }
+
         public function blog(){
 
             try{
@@ -16,15 +35,16 @@
                 die("数据库连接失败".$e->getMessage());
             } 
 
-            for($i=0;$i<100;$i++){
+            for($i=0;$i<110;$i++){
 
                 $title = $this->getChar(rand(10,50));
                 $content = $this->getChar(rand(100,600));
                 $display = rand(0,10000);
                 $date = rand(1233333399,1535592288);
                 $date = date('Y-m-d H:i:s',$date);
+                $user_id = rand(1,11);
 
-                $num = $pdo->exec("INSERT INTO blog(title,content,display,created_at) VALUES('$title','$content','$display','$date')");
+                $num = $pdo->exec("INSERT INTO blog(title,content,display,created_at,user_id) VALUES('$title','$content','$display','$date',$user_id)");
             }
         }  
 

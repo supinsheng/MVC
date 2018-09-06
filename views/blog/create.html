@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+</head>
+<body>
+    <?php view('common.nav') ?>
+    <h1>添加日志</h1>
+
+    <form action="/blog/store" method="post">
+        <div>
+            标题：
+            <input type="text" name="title">
+        </div>
+        <div>
+            内容：
+            <textarea name="content" id="content"></textarea>
+        </div>
+        
+        <div>
+            <input type="submit" value="发表日志">
+        </div>
+    </form>
+
+    <?php view('common.footer') ?>
+</body>
+</html>
+<link rel="stylesheet" type="text/css" href="/simditor/styles/simditor.css" />
+
+<script type="text/javascript" src="/simditor/scripts/jquery.min.js"></script>
+<script type="text/javascript" src="/simditor/scripts/module.js"></script>
+<script type="text/javascript" src="/simditor/scripts/hotkeys.js"></script>
+<script type="text/javascript" src="/simditor/scripts/uploader.js"></script>
+<script type="text/javascript" src="/simditor/scripts/simditor.js"></script>
+
+<script>
+    var editor = new Simditor({
+        textarea: $('#content'),
+        //optional options
+        toolbar:[
+            'title',
+            'bold',
+            'italic',
+            'underline',
+            'strikethrough',
+            'fontScale',
+            'color',
+            'ol'    ,       
+            'ul'         ,
+            'blockquote',
+            'code'       ,
+            'table',
+            'link',
+            'image',
+            'hr'          , 
+            'indent',
+            'outdent',
+            'alignment'
+        ],
+        upload:{
+            url:'/upload/upload',
+            params:'null',
+            fileKey:'image',
+            connectionCount:3,
+            leaveConfirm: '文件上传中，真要离开吗？'
+        }
+    });
+</script>

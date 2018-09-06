@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>消息提示</title>
+</head>
+<body>
+    <h1>消息提示：</h1>
+    <p><?=$message?></p>
+    <p><a href="<?=$url?>">点击立即跳转</a></p>
+    <p><span id="sec"><?=$seconds?></span>秒后自动跳转</p>
+</body>
+</html>
+<script>
+
+    var sec = "<?=$seconds?>";
+    var sp = document.getElementById('sec');
+
+    setInterval(function(){
+        sec--;
+        if(sec == 0){
+            location.href = '<?=$url?>';
+        }else {
+            sp.innerHTML = sec;
+        }
+    },1000)
+</script>
