@@ -1,37 +1,67 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <meta charset="UTF-8">
-    <title><?=$blog['title']?></title>
+    <title>
+        <?=$blog['title']?>
+    </title>
 </head>
+
 <body>
-    <?php view('common.nav') ?>
-    
-    <h1><?=$blog['title']?></h1>
+    <h1>智聊系统</h1>
+
+    <div id="menu"></div>
+
+    <h1>
+        <?=$blog['title']?>
+    </h1>
     <p>浏览量：<span id="display"></span></p>
-    <p><?=$blog['content']?></p>
+    <p>
+        <?=$blog['content']?>
+    </p>
 
     <?php view('common.footer') ?>
 </body>
+
 </html>
-<script
-  src="https://code.jquery.com/jquery-3.3.1.min.js"
-  integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
-  crossorigin="anonymous"></script>
+<script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+    crossorigin="anonymous"></script>
 
 <script>
 
     var id = "<?=$blog['id']?>";
-    
-    var url = "/blog/update_display?id="+id;
+
+    var url = "/blog/update_display?id=" + id;
 
     $.ajax({
 
-        type:"GET",
-        url:url,
-        success:function(data){
+        type: "GET",
+        url: url,
+        dataType:'json',  // 声明服务器返回的是JSON（解析JSON）
+        success: function (data) {
+
             // 把返回的浏览量放到页面
-            $("#display").html(data);
+            $("#display").html(data.display);
+
+            // 拼按钮的字符串
+            // 无论登录否都有一个首页的按钮
+            var html = '<a href="/">首页</a>';
+            // 判断登录
+            if (data.email == '') {
+                // js 中定义多行字符串时要使用 ` （反引号 1左边的键子）
+                html += ` <a href="/user/register">注册</a> 
+                      <a href="/user/login">登录</a>`;
+            }
+            else {
+                html += data.email +
+                    ` <a href="/blog/index">日志列表</a> 
+                      <a href="/blog/create">发表日志</a> 
+                      <a href="/user/login">退出</a>`;
+            }
+
+            // 获取id=menu的div 并把按钮放进去
+            $("#menu").html(html);
         }
     })
 </script>

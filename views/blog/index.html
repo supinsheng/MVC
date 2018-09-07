@@ -50,7 +50,7 @@
             <td>
                 <?=$v['id']?>
             </td>
-            <td><a href=""><?=$v['title']?></a></td>
+            <td><a href=""><?=e($v['title'])?></a></td>
             <td>
                 <?=$v['created_at']?>
             </td>
@@ -62,8 +62,16 @@
                 <?=$v['display']?>
             </td>
             <td>
-                <a href="">修改</a>
-                <a href="">删除</a>
+                <form action="/blog/edit" method="post">
+                    <?php csrf_field()?>
+                    <input type="hidden" name="id" value="<?=$v['id']?>">
+                    <input type="submit" value="修改">
+                </form>
+                <form action="/blog/delete" method="post">
+                    <?php csrf_field() ?>
+                    <input type="hidden" name="id" value="<?=$v['id']?>">
+                    <input type="submit" value="删除">
+                </form>
             </td>
         </tr>
         <?php endforeach; ?>

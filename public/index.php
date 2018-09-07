@@ -9,6 +9,16 @@
     ini_set('session.gc_maxlifetime', 600);   // 设置 SESSION 10分钟过期
     session_start();
 
+    // 如果用户以 POST 方式访问网站时，需要验证令牌
+    if($_SERVER['REQUEST_METHOD'] == 'POST')
+    {
+        if(!isset($_POST['_token']))
+            die('违法操作！');
+
+        if($_POST['_token'] != $_SESSION['token'])
+            die('违法操作！');
+    }
+
     function autoload($class){
 
         $path = str_replace('\\','/',$class);
@@ -102,4 +112,46 @@
             // 跳转到下一个页面
             redirect($url);
         }
+    }
+
+    function e($content){
+
+        return htmlspecialchars($content);
+    }
+
+    function hpe($content)
+    {
+        // 一直保存在内存中（直到脚本执行结束）
+        static $purifier = null;
+        // 只有第一次调用时才会创建新的对象
+        if($purifier === null)
+        {
+            $config = \HTMLPurifier_Config::createDefault();
+            $config->set('Core.Encoding', 'utf-8');
+            $config->set('HTML.Doctype', 'HTML 4.01 Transitional');
+            $config->set('Cache.SerializerPath', ROOT.'cache');
+            $config->set('HTML.Allowed', 'div,b,strong,i,em,a[href|title],ul,ol,ol[start],li,p[style],br,span[style],img[width|height|alt|src],*[style|class],pre,hr,code,h2,h3,h4,h5,h6,blockquote,del,table,thead,tbody,tr,th,td');
+            $config->set('CSS.AllowedProperties', 'font,font-size,font-weight,font-style,margin,width,height,font-family,text-decoration,padding-left,color,background-color,text-align');
+            $config->set('AutoFormat.AutoParagraph', TRUE);
+            $config->set('AutoFormat.RemoveEmpty', TRUE);
+            $purifier = new \HTMLPurifier($config);
+        }
+        return $purifier->purify($content);
+    }
+
+    function csrf(){
+
+        if(!isset($_SESSION['token'])){
+
+            $token = md5( rand(1,99999).microtime() );
+            $_SESSION['token'] = $token;
+        }
+
+        return $_SESSION['token'];
+    }
+
+    function csrf_field(){
+
+        $csrf = isset($_SESSION['token']) ? $_SESSION['token'] : csrf();
+        echo "<input type='hidden' name='_token' value='{$csrf}'>";
     }

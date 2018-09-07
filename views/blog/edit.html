@@ -6,21 +6,22 @@
 </head>
 <body>
     <?php view('common.nav') ?>
-    <h1>添加日志</h1>
+    <h1>修改日志</h1>
 
-    <form action="/blog/store" method="post">
+    <form action="/blog/update" method="post">
         <input type="hidden" name="_token" value="<?=csrf()?>">
+        <input type="hidden" name="id" value="<?=$data['id']?>">
         <div>
             标题：
-            <input type="text" name="title">
+            <input type="text" name="title" value="<?=$data['title']?>">
         </div>
         <div>
             内容：
-            <textarea name="content" id="content"></textarea>
+            <textarea name="content" id="content"><?=$data['content']?></textarea>
         </div>
         
         <div>
-            <input type="submit" value="发表日志">
+            <input type="submit" value="修改日志">
         </div>
     </form>
 

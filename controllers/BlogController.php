@@ -31,7 +31,12 @@
             $id = (int)$_GET['id'];
 
             $blog = new Blog;
-            echo $blog->getDisplay($id);
+            $display = $blog->getDisplay($id);
+
+            echo json_encode([
+                'display'=>$display,
+                'email'=>isset($_SESSION['email']) ? $_SESSION['email'] : ''
+            ]);
 
             // $redis->set("library","predis");
 
@@ -64,8 +69,49 @@
 
             $blog = new Blog;
 
-            $blog->add($title,$content);
+            $id = $blog->add($title,$content);
+
+            $blog->makeHtml($id);
 
             message("发表成功",2,"/blog/index");
+        }
+
+        public function delete()
+        {
+            $id = $_POST['id'];
+
+            $blog = new Blog;
+            $blog->delete($id);
+
+            $blog->delHtml($id);
+
+            message('删除成功',2,'/blog/index');
+
+        }
+
+        public function edit(){
+
+            $id = $_POST['id'];
+
+            $blog = new Blog;
+
+            $data = $blog->find($id);
+
+            view("blog.edit",['data'=>$data]);
+        }
+
+        public function update(){
+
+            $title = $_POST['title'];
+            $content = $_POST['content'];
+            $id = $_POST['id'];
+
+            $blog = new Blog;
+
+            $blog->update($title,$content,$id);
+
+            $blog->makeHtml($id);
+
+            message('修改成功！', 1, '/blog/index');
         }
     }

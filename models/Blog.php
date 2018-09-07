@@ -5,9 +5,29 @@
 
     class Blog extends Base {
 
+        // 添加静态页
+        public function makeHtml($id){
+
+            $blog = $this->find($id);
+
+            ob_start();
+
+            view("blog.content",['blog'=>$blog]);
+
+            $content = ob_get_clean();
+
+            file_put_contents(ROOT."public/contents/".$id.".html",$content);
+        }
+
+        // 删除静态页
+        public function delHtml($id){
+
+            @unlink(ROOT."public/contents/".$id.".html");
+        }
+
         public function search(){
 
-            $where = 1;
+            $where = 'user_id='.$_SESSION['id'];
 
             $value = [];
 
@@ -176,5 +196,33 @@
             }
 
             return self::$pdo->lastInsertId();
+        }
+
+        public function delete($id)
+        {
+            // 只能删除自己的日志
+            $stmt = self::$pdo->prepare('DELETE FROM blog WHERE id = ? AND user_id=?');
+            $stmt->execute([
+                $id,
+                $_SESSION['id'],
+            ]);
+        }
+
+        public function find($id){
+
+            $stmt = self::$pdo->prepare("SELECT * FROM blog WHERE id = ?");
+
+            $stmt->execute([$id]);
+
+            $blog = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            return $blog;
+        }
+
+        public function update($title,$content,$id){
+
+            $stmt = self::$pdo->prepare("UPDATE blog SET title=?,content=? WHERE id=?");
+
+            $ret = $stmt->execute([$title,$content,$id]);
         }
     }
