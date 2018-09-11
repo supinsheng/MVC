@@ -17,4 +17,19 @@
                 self::$pdo->exec("set names ".$config['charset']."");
             }
         }
+
+        public function startTrans(){
+
+            self::$pdo->exec('start transaction');
+        }
+
+        public function commit(){
+
+            self::$pdo->exec('commit');
+        }
+
+        public function rollback(){
+
+            self::$pdo->exec('rollback');
+        }
     }

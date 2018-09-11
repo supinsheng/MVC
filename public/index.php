@@ -3,21 +3,42 @@
     define("ROOT",dirname(__FILE__)."/../");
     require(ROOT.'vendor/autoload.php');
 
+
+    
+
     // 设置 SESSION 保存
     ini_set('session.save_handler', 'redis');   // 使用 redis 保存 SESSION
     ini_set('session.save_path', 'tcp://127.0.0.1:6379?database=1');  // 设置 redis 服务器的地址、端口、使用的数据库
     ini_set('session.gc_maxlifetime', 600);   // 设置 SESSION 10分钟过期
     session_start();
 
-    // 如果用户以 POST 方式访问网站时，需要验证令牌
-    if($_SERVER['REQUEST_METHOD'] == 'POST')
-    {
-        if(!isset($_POST['_token']))
-            die('违法操作！');
+    // $cURL = curl_init();
+    // $url  = 'http://www.51-n.com/';
+    // curl_setopt_array(
+    //         $cURL,
+    //         array(
+    //                 CURLOPT_CAINFO => 'c:/wamp64/bin/php/php7.1.16/extras/ssl/cacert.pem',
+    //                 CURLOPT_URL => $url,        
+    //                 CURLOPT_REFERER => $url,
+    //                 CURLOPT_AUTOREFERER => true,
+    //                 CURLOPT_RETURNTRANSFER => true,
+    //                 CURLOPT_SSL_VERIFYPEER => false,
+    //                 CURLOPT_SSL_VERIFYHOST => false,
+    //                 CURLOPT_CONNECTTIMEOUT => 1,
+    //                 CURLOPT_TIMEOUT => 30,
+    //                 CURLOPT_USERAGENT => 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/34.0.1847.116 Safari/537.36'
+    //         )
+    // );
 
-        if($_POST['_token'] != $_SESSION['token'])
-            die('违法操作！');
-    }
+    // 如果用户以 POST 方式访问网站时，需要验证令牌
+    // if($_SERVER['REQUEST_METHOD'] == 'POST')
+    // {
+    //     if(!isset($_POST['_token']))
+    //         die('违法操作！');
+
+    //     if($_POST['_token'] != $_SESSION['token'])
+    //         die('违法操作！');
+    // }
 
     function autoload($class){
 
