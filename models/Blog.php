@@ -5,6 +5,12 @@
 
     class Blog extends Base {
 
+        public function getNew()
+        {
+            $stmt = self::$pdo->query('SELECT * FROM blog ORDER BY id DESC LIMIT 20');
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        }
+
         // 添加静态页
         public function makeHtml($id){
 

@@ -12,7 +12,7 @@ class AlipayController {
     public $config = [
         'app_id' => '2016091600527385',
         // 通知地址
-        'notify_url' => 'http://0a3de674.ngrok.io/alipay/notify',
+        'notify_url' => 'http://0e452974.ngrok.io/alipay/notify',
         // 跳回地址
         'return_url' => 'http://localhost:5533/alipay/return',
         // 支付宝公钥
@@ -112,7 +112,7 @@ class AlipayController {
 
             // 退款
             $ret = Pay::alipay($this->config)->refund([
-                'out_trade_no' => '1536326976',    // 之前的订单流水号
+                'out_trade_no' => '258921699892785152',    // 之前的订单流水号
                 'refund_amount' => 100.00,              // 退款金额，单位元
                 'out_request_no' => $refundNo,     // 退款订单号
             ]);

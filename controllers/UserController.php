@@ -6,6 +6,34 @@
 
     class UserController {
 
+        public function avatar(){
+
+            view('users.avatar');
+        }
+
+        public function orderStatus(){
+
+            $sn = $_GET['sn'];
+
+            $order = new Order;
+
+            $try = 5;
+
+            do{ 
+                $status = $order->status($sn);
+
+                if($status == 0){
+
+                    sleep(1);
+                    $try--;
+                }else {
+                    break;
+                }
+            }while($try>0);
+
+            echo $status;
+        }
+
         public function money(){
 
             $user = new User;

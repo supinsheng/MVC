@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+</head>
+<body>
+    <!-- 单文件上传 -->
+    <form action="/test/doupload" method="post" enctype="multipart/form-data">
+        <input type="file" name="image">
+        <input type="submit" value="上传">
+    </form>
+
+    <!-- 多文件上传 -->
+    <!-- <form action="/test/douploadm" method="post" enctype="multipart/form-data">
+        <input type="file" name="images[]">
+        <input type="file" name="images[]">
+        <input type="file" name="images[]">
+        <input type="submit" value="上传">
+    </form> -->
+
+    <!-- 大文件分割上传 -->
+    <!-- <form action="" method="post" enctype="multipart/form-data">
+        <input type="file" name="image" id="img">
+        <input type="submit" id="btn" value="上传">
+    </form> -->
+</body>
+</html>
+<script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
+<script>
+    var img = document.getElementById('img');
+
+    var btn = document.getElementById('btn');
+
+    btn.onclick = function(){
+
+        var img1 = img.files[0];
+        var fileSize = img1.size;
+        var perSize = 4096;
+
+        var count = Math.ceil(fileSize / perSize);
+
+        var name = "img_"+Math.random(1,99999);
+
+        for(var i=0;i<count;i++){
+
+            var img0 = img1.slice(i*perSize,i*perSize+perSize);
+
+            var f = new FormData();
+
+            f.append('img',img0);
+            f.append('count',count);
+            f.append('i',i);
+            f.append('size',perSize);
+            f.append('img_name',name);
+
+            $.ajax({
+                type:'POST',
+                url:'/test/uploadbig',
+                data:f,
+                contentType: false,
+                processData: false,
+                success:function(data){
+                    console.log(data);
+                }
+            })
+        }
+    }
+</script>

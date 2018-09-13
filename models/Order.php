@@ -5,6 +5,13 @@ use PDO;
 
 class Order extends Base {
 
+    public function status($sn){
+
+        $stmt = self::$pdo->prepare("SELECT status FROM orders WHERE sn=?");
+        $stmt->execute([$sn]);
+        return $stmt->fetch(PDO::FETCH_COLUMN);
+    }
+
     // 下订单
     public function create($money) {
 
