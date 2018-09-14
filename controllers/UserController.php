@@ -6,6 +6,21 @@
 
     class UserController {
 
+        public function setAvatar(){
+
+            $upload = \Libs\Uploader::make();
+            $path = $upload->upload('avatar','avatar');
+
+            $user = new User;
+            $user->setAvatar('/uploads/'.$path);
+
+            @unlink( ROOT . 'public/' . $_SESSION['avatar'] );
+
+            $_SESSION['avatar'] = '/uploads/'.$path;
+
+            message('设置成功！',2,'/blog/index');
+        }
+
         public function avatar(){
 
             view('users.avatar');

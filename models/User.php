@@ -5,6 +5,21 @@
 
     class User extends Base {
 
+        public function getAll(){
+
+            $stmt = self::$pdo->query("SELECT * FROM users");
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        }
+
+        public function setAvatar($path){
+
+            $stmt = self::$pdo->prepare('UPDATE users SET avatar=? WHERE id=?');
+            $stmt->execute([
+                $path,
+                $_SESSION['id']
+            ]);
+        }
+
         public function getMoney(){
 
             $stmt = self::$pdo->prepare("SELECT money FROM users WHERE id=?");
@@ -45,6 +60,7 @@
                 $_SESSION['id'] = $user['id'];
                 $_SESSION['email'] = $user['email'];
                 $_SESSION['money'] = $user['money'];
+                $_SESSION['avatar'] = $user['avatar'] ? $user['avatar'] : '/images/fave.jpg';
 
                 return TRUE;
             }

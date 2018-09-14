@@ -5,6 +5,7 @@
     <title>首页</title>
 </head>
 <body>
+    <?php view('common.nav') ?>
     <h1>最新发表的日志</h1>
     <ul>
         <?php foreach($blogs as $v): ?>
@@ -17,5 +18,51 @@
 
         <?php endforeach; ?>
     </ul>
+    <?php if(config('mode')=='dev'): ?>
+    <select id="alluser">
+        <option value="">选择账号</option>
+    </select>
+    <?php endif; ?>
+    <?php view('common.footer') ?>
 </body>
 </html>
+<script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
+<script>
+    $.ajax({
+        type:'GET',
+        url:"/tool/users",
+        dataType:'json',
+        success:function(data){
+            
+            if(data.status_code == 200){
+             
+                var html = '';
+                for(var i=0;i<data.data.length;i++){
+
+                    html += '<option value="'+data.data[i].email+'">'+data.data[i].email+'</option>';
+                }
+                $("#alluser").append(html);
+            }
+        }
+    });
+
+
+    <?php if(config('mode') == 'dev'): ?>
+    $("#alluser").change(function(){
+        // 获取选中的值
+        var email = $(this).val()
+        if(email != '')
+        {
+            $.ajax({
+                type:"GET",
+                url:"/tool/login?email="+email,
+                success:function(data)
+                {
+                    // 刷新页面
+                    location.reload();
+                }
+            })
+        }
+    });
+    <?php endif; ?>
+</script>

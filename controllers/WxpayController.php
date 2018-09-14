@@ -11,7 +11,7 @@ class WxpayController
         'app_id' => 'wx426b3015555a46be', // 公众号 APPID
         'mch_id' => '1900009851',
         'key' => '8934e7d15453e97507ef794cf7b0519d',
-        'notify_url' => 'http://0a3de674.ngrok.io/wxpay/notify',
+        'notify_url' => 'http://cea3e421.ngrok.io/wxpay/notify',
     ];
 
     public function pay()

@@ -5,6 +5,8 @@ class IndexController
 {
     public function index()
     {
-        echo 'index';
+        $blog = new \Models\Blog;
+        $blogs = $blog->getNew();
+        view('index.index',['blogs'=>$blogs]);
     }
 }
