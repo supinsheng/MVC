@@ -3,6 +3,7 @@
     namespace controllers;
     use Models\User;
     use Models\Order;
+    use Intervention\Image\ImageManagerStatic as Image;
 
     class UserController {
 
@@ -10,6 +11,10 @@
 
             $upload = \Libs\Uploader::make();
             $path = $upload->upload('avatar','avatar');
+
+            $image = Image::make(ROOT.'public/uploads/'.$path);
+            $image->crop((int)$_POST['w'],(int)$_POST['h'],(int)$_POST['x'],(int)$_POST['y']);
+            $image->save(ROOT . 'public/uploads/'.$path);
 
             $user = new User;
             $user->setAvatar('/uploads/'.$path);

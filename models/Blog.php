@@ -5,6 +5,38 @@
 
     class Blog extends Base {
 
+        public function agree($id){
+
+            // 判断是否点过
+            $stmt = self::$pdo->prepare('SELECT COUNT(*) FROM blog_agrees WHERE user_id=? AND blog_id=?');
+            $stmt->execute([
+                $_SESSION['id'],
+                $id
+            ]);
+
+            $count = $stmt->fetch(PDO::FETCH_COLUMN);
+
+            if($count == 1){
+                return FALSE;
+            }
+
+            $stmt = self::$PDO->prepare('INSERT INTO blog_agrees(user_id,blog_id) VALUES(?,?)');
+            
+            $ret = $stmt->execute([
+                $_SESSION['id'],
+                $id
+            ]);
+
+            if($ret){
+
+                $stmt = self::$pdo->prepare('UPDATE blog SET agree_count=agree_count+1 WHERE id=?');
+
+                $stmt->execute([$id]);
+            }
+
+            return $ret;
+        }
+
         public function getNew()
         {
             $stmt = self::$pdo->query('SELECT * FROM blog ORDER BY id DESC LIMIT 20');

@@ -5,6 +5,40 @@
 
     class BlogController {
 
+        // 点赞
+        public function agreements(){
+
+            $id = $_GET['id'];
+            // 判断登陆
+            if(!isset($_SESSION['id'])){
+
+                echo json_encode([
+                    'status_code' => '403',
+                    'message' => '必须先登录'
+                ]);
+                exit;
+            }
+
+            // 点赞
+            $model = new \Models\Blog;
+            $ret = $model->agree($id);
+
+            if($ret){
+
+                echo json_encode([
+                    'status_code' => '200',
+                ]);
+                exit;
+            }else{
+                
+                echo json_encode([
+                    'status_code' => '403',
+                    'message' => '已经点赞过了'
+                ]);
+                exit;
+            }
+        }
+
         public function index(){
 
             $blog = new Blog;
