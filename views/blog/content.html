@@ -6,6 +6,72 @@
     <title>
         <?=$blog['title']?>
     </title>
+    <style>
+        .comment-list {
+            border: 1px solid skyblue;
+            margin-top: 10px;
+            padding: 10px;
+        }
+
+        .comment-list .left {
+            float: left;
+            width: 15%;
+            text-align: center;
+        }
+
+        .comment-list .left img {
+            border-radius: 50%;
+        }
+
+        .comment-list .right {
+            float: left;
+            width: 75%;
+            margin-left: 20px;
+        }
+
+        .comment-list .right .date {
+            font-size: 12px;
+            color: #999;
+            margin-bottom: 5px;
+        }
+
+        .comment-list .right .con {
+            font-size: 14px;
+            color: #666;
+        }
+
+        .clearfix {
+            clear: both;
+        }
+
+        #btn-agree {
+
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+
+        .agree-list {
+            border: 1px solid skyblue;
+            padding: 0;
+            text-align: center;
+        }
+        .avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            border: 1px solid skyblue;
+            padding: 5px;
+            margin-left: 20px;
+        }
+        .agree-list h3 {
+            padding: 0;
+            margin-top: 0;
+            background-color: #EEE;
+            padding: 5px;
+        }
+    </style>
 </head>
 
 <body>
@@ -21,16 +87,96 @@
         <?=$blog['content']?>
     </p>
 
+    <hr>
+    <!-- 点赞 -->
+    <img id="btn-agree" src="/images/agree.jpg" alt="">
+
+    <!-- 点赞列表 -->
+    <div class="agree-list">
+        <h3>点赞列表</h3>
+        <div id="avatar-list"></div>
+    </div>
+
+    <div id="comment_app">
+        <!-- 发表评论 -->
+        <br><br>
+        <form action="">
+            <textarea v-model="content" cols="60" rows="10"></textarea>
+            <br>
+            <input @click="submit" type="button" value="发表评论">
+        </form>
+
+
+        <!-- 评论 -->
+        <div v-for="(v,k) in comments" class="comment-list">
+            <div class="left">
+                <img :src="v.avatar" width="50" height="50" alt="">
+                <p> {{ v.email }} </p>
+            </div>
+            <div class="right">
+                <div class="date">{{ v.created_at }}</div>
+                <div class="con">{{ v.content }}</div>
+            </div>
+            <div class="clearfix"></div>
+        </div>
+    </div>
+
     <?php view('common.footer') ?>
 </body>
 
 </html>
 <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
     crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/vue"></script>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 
 <script>
 
     var id = "<?=$blog['id']?>";
+
+    new Vue({
+        // 挂载
+        el:"#comment_app",
+        data:{
+            content:'',
+            blog_id:"<?=$blog['id']?>",
+            comments:[]
+        },  
+        created:function(){
+
+            axios.get('/comment/comment_list?id='+id).then(res=>{
+
+                if(res.data.status_code == 200){
+
+                    this.comments = res.data.data;
+                }        
+            })
+        },
+        methods:{
+            "submit":function(){
+                axios.post('/comment/comments',{
+                    content:this.content,
+                    blog_id:this.blog_id
+                }).then(res=>{
+                    if(res.data.status_code == 200){
+                        alert('发表成功!');
+                        
+                        // 把新发表的添加到数组中的最前面
+                        this.comments.unshift({
+                            email:res.data.data.email,
+                            content:res.data.data.content,
+                            created_at:res.data.data.created_at,
+                            avatar:res.data.data.avatar
+                        })
+
+                        this.content = '';
+                    }else {
+                        alert(res.data.message);
+                    }
+                })
+            }
+        }
+    })
 
     var url = "/blog/update_display?id=" + id;
 
@@ -62,6 +208,44 @@
 
             // 获取id=menu的div 并把按钮放进去
             $("#menu").html(html);
+        }
+    })
+
+    // 点赞
+    $("#btn-agree").click(function(){
+        $.ajax({
+            type:'POST',
+            url:'/blog/agreements?id='+id,
+            dataType:'json',
+            success:function(data){
+                if(data.status_code == 200){
+                    alert('点赞成功!');
+                }else {
+                    alert(data.message);
+                }
+            }
+        })
+    })
+
+    // 点赞列表
+    $.ajax({
+        type:'GET',
+        url:'/blog/agreements_list?id='+id,
+        dataType:'json',
+        success:function(data){
+
+            if(data.status_code == 200){
+                
+                var html = '';
+                for(var i=0;i<data.data.length;i++){
+
+                    var avatar = data.data[i].avatar ? data.data[i].avatar : '/images/fave.jpg';
+                    html += '<img title="'+data.data[i].email+'" class="avatar" src="'+avatar+'" alt="">';
+                }
+
+                // 把字符串放到页面	
+                $("#avatar-list").html( html )
+            }
         }
     })
 </script>

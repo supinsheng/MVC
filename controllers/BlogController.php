@@ -39,6 +39,29 @@
             }
         }
 
+        // 获取点赞的用户
+        public function agreements_list(){
+
+            $id = $_GET['id'];
+            $model = new \Models\Blog;
+            $data = $model->agreeList($id);
+
+            echo json_encode([
+                'status_code'=>200,
+                'data'=>$data
+            ]);
+        }
+
+        public function contents(){
+
+            $id = $_GET['id'];
+
+            $model = new Blog;
+            $blog = $model->find($id);
+
+            view('blog.content',['blog'=>$blog]);
+        }
+
         public function index(){
 
             $blog = new Blog;

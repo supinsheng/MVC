@@ -3,7 +3,8 @@
     define("ROOT",dirname(__FILE__)."/../");
     require(ROOT.'vendor/autoload.php');
 
-
+    // 设置时区
+    date_default_timezone_set('PRC');
     
 
     // 设置 SESSION 保存

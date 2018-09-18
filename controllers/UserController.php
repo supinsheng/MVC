@@ -19,7 +19,10 @@
             $user = new User;
             $user->setAvatar('/uploads/'.$path);
 
-            @unlink( ROOT . 'public/' . $_SESSION['avatar'] );
+            if($_SESSION['avatar'] != "/images/fave.jpg"){
+
+                @unlink( ROOT . 'public/' . $_SESSION['avatar'] );
+            }
 
             $_SESSION['avatar'] = '/uploads/'.$path;
 
