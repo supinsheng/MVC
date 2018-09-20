@@ -7,6 +7,12 @@
 
     class UserController {
 
+        public function setActiveUsers(){
+
+            $user = new User;
+            $user->computeActiveUsers();
+        }
+
         public function setAvatar(){
 
             $upload = \Libs\Uploader::make();

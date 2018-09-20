@@ -18,6 +18,18 @@
 
         <?php endforeach; ?>
     </ul>
+
+    <h1>一周活跃用户</h1>
+    <ul>
+        <?php foreach($users as $v): ?>
+
+            <li>
+                <img size="50" height="50" src="<?=  $v['avatar'] ? $v['avatar'] : '/images/fave.jpg'   ?>" title="<?=$v['email']?>">
+            </li>
+
+        <?php endforeach; ?>
+    </ul>
+
     <?php if(config('mode')=='dev'): ?>
     <select id="alluser">
         <option value="">选择账号</option>

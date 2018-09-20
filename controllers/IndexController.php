@@ -7,6 +7,10 @@ class IndexController
     {
         $blog = new \Models\Blog;
         $blogs = $blog->getNew();
-        view('index.index',['blogs'=>$blogs]);
+
+        $user = new \Models\User;
+        $users = $user->getActiveUsers();
+
+        view('index.index',['blogs'=>$blogs,'users'=>$users]);
     }
 }
