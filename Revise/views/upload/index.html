@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+</head>
+<body>
+    <form action="" method="" enctype="multipart/form-data">
+        <input type="file" name="image" id="img">
+        <input type="button" id="btn" value="上传">
+    </form>
+</body>
+</html>
+<script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
+<script>
+    var img = document.getElementById('img');
+    var btn = document.getElementById('btn');
+
+    btn.onclick = function(){
+
+        var img1 = img.files[0];
+        if(img1){
+
+            var fileSize = img1['size'];
+
+            console.log(fileSize);
+        
+            var perSize = 4096;
+
+            var count = Math.ceil(fileSize/perSize);
+
+            var name = "img_"+Math.random();
+            
+            for(var i=0;i<count;i++){
+
+                var img0 = img1.slice(i*perSize,i*perSize+perSize);
+
+                var f = new FormData();
+                f.append('img',img0);
+                f.append('count',count);
+                f.append('i',i);
+                f.append('size',perSize);
+                f.append('img_name',name);
+
+                $.ajax({
+                    type:"POST",
+                    url:"/upload/saveBig",
+                    data:f,
+                    contentType: false,
+                    processData: false,
+                    success:function(data){
+                        console.log(data);
+                    }
+                })
+            }
+        }else {
+            alert("请先选择文件！");
+        }  
+    }
+
+</script>
