@@ -47,5 +47,5 @@ function view($viewFileName,$data=[]){
 
 function back(){
 
-    header("Location:".$$_SERVER['HTTP_REFERER']);
+    header("Location:".$_SERVER['HTTP_REFERER']);
 }
